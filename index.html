@@ -11,36 +11,64 @@
 
         function UserList() {
             const [userData, setUserData] = React.useState([])
+            const [userDetails, setUserDetails] = React.useState([])
 
             React.useEffect(() => {
-                fetchUsersData().then(userData => {setUserData(userData)})
+                fetchUsersData().then(userData => {setUserData(userData)} ,[])
             })
             
+            function handleClick(searchedName) {
+                fetchUserDetails(searchedName).then(userDetails => {setUserDetails(userDetails), [searchedName]})
+                
+                console.log("flo is logging:")
+                console.log(JSON.stringify(userDetails)) 
+            }
+            
             return (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Company Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {userData.map((user) => (
-                            <tr key = {user.id} >
-                                <button><td>{user.name}</td></button>
-                                <td>{user.email}</td>
-                                <td>{user.company.name}</td>
+                <>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Company Name</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {userData.map((user) => (
+                                <tr key = {user.id} >
+                                    <td><button onClick = {() => handleClick(user.name)}>{user.name}</button></td>
+                                    <td>{user.email}</td>
+                                    <td>{user.company.name}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <hr/>
+                    <p>
+                        {userDetails && userDetails[0] ? "This is user details" : "No user selected"}
+                    </p>
+                    <div>
+                        {userDetails && userDetails[0] &&  
+                            <>
+                                <div >Name: {userDetails[0].name} </div>
+                                <div >Email: {userDetails[0].email} </div>
+                                <div >Phone: {userDetails[0].phone} </div>
+                                <div >Address: {userDetails[0].address.street}, {userDetails[0].address.suite}, {userDetails[0].address.city} {userDetails[0].address.zipcode} </div>
+                                <div >Website: {userDetails[0].website} </div>
+                            </>
+                        }
+                    </div>
+                </>
             )
         }
 
-        function UserRow() {
-            //  use the event onClick and then pass this component
-            // call the URL https://jsonplaceholder.typicode.com/users, show all columns
+        function fetchUserDetails(searchedName) {
+            return window
+                .fetch(`https://jsonplaceholder.typicode.com/users?name=${searchedName}`, {
+                    method: 'GET'
+                })
+                .then(r => r.json())
             
         }
 
