@@ -14,8 +14,8 @@
             const [userDetails, setUserDetails] = React.useState([])
 
             React.useEffect(() => {
-                fetchUsersData().then(userData => {setUserData(userData)} ,[])
-            })
+                fetchUsersData().then(userData => {setUserData(userData)})
+            }, [])
             
             function handleClick(searchedName) {
                 fetchUserDetails(searchedName).then(userDetails => {setUserDetails(userDetails), [searchedName]})
